@@ -44,9 +44,11 @@
 		'Слишком часто. Подождите полминуты.': 'errWait'
 	};
 
-	var lang = 'ru';
+	// Язык по умолчанию задаётся в кастомайзере; личный выбор посетителя важнее.
+	var lang = cfg.defaultLang === 'en' ? 'en' : 'ru';
 	try {
-		if (localStorage.getItem('mb_lang') === 'en') { lang = 'en'; }
+		var stored = localStorage.getItem('mb_lang');
+		if (stored === 'en' || stored === 'ru') { lang = stored; }
 	} catch (e) {}
 
 	function t(key) { return I18N[lang][key]; }

@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MILKBROS_VERSION', '1.1.0' );
+define( 'MILKBROS_VERSION', '1.1.1' );
 define( 'MILKBROS_SLIDE_COUNT', 5 );
 
 add_action( 'after_setup_theme', function () {
@@ -22,8 +22,9 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_enqueue_style( 'milkbros', get_stylesheet_uri(), array(), MILKBROS_VERSION );
 	wp_enqueue_script( 'milkbros', get_theme_file_uri( 'assets/js/app.js' ), array(), MILKBROS_VERSION, true );
 	wp_localize_script( 'milkbros', 'milkbrosCfg', array(
-		'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-		'nonce'   => wp_create_nonce( 'milkbros_feedback' ),
+		'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
+		'nonce'       => wp_create_nonce( 'milkbros_feedback' ),
+		'defaultLang' => milkbros_get_default_lang(),
 	) );
 } );
 
@@ -73,6 +74,14 @@ function milkbros_get_overlay_texts() {
 }
 
 /**
+ * Язык по умолчанию для посетителей, которые ещё не выбрали свой
+ * кнопкой RU/EN. Настраивается в кастомайзере.
+ */
+function milkbros_get_default_lang() {
+	return 'en' === get_theme_mod( 'milkbros_default_lang', 'ru' ) ? 'en' : 'ru';
+}
+
+/**
  * Куда отправлять письма из формы. Пока адрес не задан в кастомайзере —
  * используется email администратора сайта.
  */
@@ -85,6 +94,23 @@ add_action( 'customize_register', function ( $wp_customize ) {
 	$wp_customize->add_section( 'milkbros', array(
 		'title'    => 'MILK BROS: галерея и контакты',
 		'priority' => 10,
+	) );
+
+	$wp_customize->add_setting( 'milkbros_default_lang', array(
+		'default'           => 'ru',
+		'sanitize_callback' => function ( $value ) {
+			return 'en' === $value ? 'en' : 'ru';
+		},
+	) );
+	$wp_customize->add_control( 'milkbros_default_lang', array(
+		'label'       => 'Язык по умолчанию',
+		'description' => 'Что видит посетитель при первом заходе. Его собственный выбор кнопкой RU/EN важнее этой настройки.',
+		'section'     => 'milkbros',
+		'type'        => 'radio',
+		'choices'     => array(
+			'ru' => 'Русский',
+			'en' => 'English',
+		),
 	) );
 
 	$overlay_defaults = milkbros_default_overlay_texts();

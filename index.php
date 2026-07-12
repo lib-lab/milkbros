@@ -5,6 +5,7 @@
 
 $milkbros_slides = milkbros_get_slides();
 $milkbros_texts  = milkbros_get_overlay_texts();
+$milkbros_lang   = milkbros_get_default_lang();
 ?><!doctype html>
 <html <?php language_attributes(); ?>>
 <head>
@@ -25,10 +26,12 @@ $milkbros_texts  = milkbros_get_overlay_texts();
 
 <aside class="mb-info">
 <?php foreach ( $milkbros_texts as $i => $pair ) : ?>
-	<div class="mb-info__text<?php echo 0 === $i ? ' is-active' : ''; ?>" data-info="<?php echo (int) $i; ?>" data-lang="ru"<?php echo 0 === $i ? '' : ' hidden'; ?>>
+	<?php $milkbros_ru_on = ( 0 === $i && 'ru' === $milkbros_lang ); ?>
+	<?php $milkbros_en_on = ( 0 === $i && 'en' === $milkbros_lang ); ?>
+	<div class="mb-info__text<?php echo $milkbros_ru_on ? ' is-active' : ''; ?>" data-info="<?php echo (int) $i; ?>" data-lang="ru"<?php echo $milkbros_ru_on ? '' : ' hidden'; ?>>
 		<?php echo nl2br( esc_html( $pair['ru'] ) ); ?><span class="mb-cursor" aria-hidden="true"></span>
 	</div>
-	<div class="mb-info__text" data-info="<?php echo (int) $i; ?>" data-lang="en" hidden>
+	<div class="mb-info__text<?php echo $milkbros_en_on ? ' is-active' : ''; ?>" data-info="<?php echo (int) $i; ?>" data-lang="en"<?php echo $milkbros_en_on ? '' : ' hidden'; ?>>
 		<?php echo nl2br( esc_html( $pair['en'] ) ); ?><span class="mb-cursor" aria-hidden="true"></span>
 	</div>
 <?php endforeach; ?>
