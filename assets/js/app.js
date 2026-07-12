@@ -29,6 +29,7 @@
 		});
 		infos.forEach(function (info, n) {
 			info.classList.toggle('is-active', n === current);
+			info.hidden = n !== current;
 		});
 	}
 

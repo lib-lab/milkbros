@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MILKBROS_VERSION', '1.0.0' );
+define( 'MILKBROS_VERSION', '1.0.1' );
 define( 'MILKBROS_SLIDE_COUNT', 5 );
 
 add_action( 'after_setup_theme', function () {

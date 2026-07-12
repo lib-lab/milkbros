@@ -24,7 +24,7 @@ $milkbros_slides = milkbros_get_slides();
 
 <aside class="mb-info">
 <?php foreach ( milkbros_get_overlay_texts() as $i => $text ) : ?>
-	<div class="mb-info__text<?php echo 0 === $i ? ' is-active' : ''; ?>" data-info>
+	<div class="mb-info__text<?php echo 0 === $i ? ' is-active' : ''; ?>" data-info<?php echo 0 === $i ? '' : ' hidden'; ?>>
 		<?php echo nl2br( esc_html( $text ) ); ?><span class="mb-cursor" aria-hidden="true"></span>
 	</div>
 <?php endforeach; ?>
