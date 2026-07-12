@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"/Users/liblab/Documents/MILK BROS/\" 2>&1; echo \"---\"; ls -la \"/Users/liblab/Documents/MILK BROS/wp-theme\" 2>&1)",
+      "Bash(php -v)",
+      "Bash(ls /opt/homebrew/bin/php* /usr/local/bin/php* 2>/dev/null; which python3; python3 --version 2>&1)",
+      "Bash(curl -s -o /dev/null -w \"style.css: %{http_code} %{content_type}\\\\n\" http://127.0.0.1:8734/style.css)",
+      "Bash(curl -s -o /dev/null -w \"slide-1.svg: %{http_code} %{content_type}\\\\n\" http://127.0.0.1:8734/assets/slides/slide-1.svg)",
+      "Bash(curl -s -o /dev/null -w \"app.js: %{http_code} %{content_type}\\\\n\" http://127.0.0.1:8734/assets/js/app.js)",
+      "Bash(P=\"/private/tmp/claude-501/-Users-liblab-Documents-MILK-BROS-wp-theme/6cd97672-4a87-4ba2-835d-3d0959a5df40/scratchpad/preview\" && T=\"/Users/liblab/Documents/MILK BROS/wp-theme\" && cp \"$T/style.css\" \"$P/style.css\" && mkdir -p \"$P/assets/js\" \"$P/assets/slides\" && cp \"$T/assets/js/app.js\" \"$P/assets/js/\" && cp \"$T\"/assets/slides/*.svg \"$P/assets/slides/\" && ls -R \"$P\" | head -20)",
+      "Bash(P=\"/private/tmp/claude-501/-Users-liblab-Documents-MILK-BROS-wp-theme/6cd97672-4a87-4ba2-835d-3d0959a5df40/scratchpad/preview\" && T=\"/Users/liblab/Documents/MILK BROS/wp-theme\" && cp \"$T/style.css\" \"$P/style.css\" && cp \"$T\"/assets/slides/*.svg \"$P/assets/slides/\" && cp \"$T/assets/js/app.js\" \"$P/assets/js/\")",
+      "Bash(sed -i '' 's/alt=\"Слайд \\\\\\([0-9]\\\\\\)\"/alt=\"Этикетка \\\\1\"/g' /private/tmp/claude-501/-Users-liblab-Documents-MILK-BROS-wp-theme/6cd97672-4a87-4ba2-835d-3d0959a5df40/scratchpad/preview/index.html)",
+      "Bash(perl -0pi -e 's/\\\\tMILK BROS<br>\\\\nНезависимая студия\\\\.<br>\\\\nСнимаем\\\\. Монтируем\\\\. Выпускаем\\\\.<br>\\\\nПишите — ответим быстро\\\\./\\\\tMILK BROS BREWING<br>\\\\nСОСТАВ: вода, ячменный солод, хмель, дрожжи.<br>\\\\nАЛК. 4,9% об. · ЭКСТРАКТ 12%<br>\\\\nНефильтрованное. Живое./' /private/tmp/claude-501/-Users-liblab-Documents-MILK-BROS-wp-theme/6cd97672-4a87-4ba2-835d-3d0959a5df40/scratchpad/preview/index.html)",
+      "Bash(cp \"/Users/liblab/Documents/MILK BROS/wp-theme\"/assets/slides/*.svg \"/private/tmp/claude-501/-Users-liblab-Documents-MILK-BROS-wp-theme/6cd97672-4a87-4ba2-835d-3d0959a5df40/scratchpad/preview/assets/slides/\")",
+      "Bash(rm -rf /private/tmp/claude-501/-Users-liblab-Documents-MILK-BROS-wp-theme/6cd97672-4a87-4ba2-835d-3d0959a5df40/scratchpad/build)",
+      "Bash(mkdir -p /private/tmp/claude-501/-Users-liblab-Documents-MILK-BROS-wp-theme/6cd97672-4a87-4ba2-835d-3d0959a5df40/scratchpad/build/milkbros)",
+      "Bash(cp '/Users/liblab/Documents/MILK BROS/wp-theme/style.css' '/Users/liblab/Documents/MILK BROS/wp-theme/functions.php' '/Users/liblab/Documents/MILK BROS/wp-theme/index.php' /private/tmp/claude-501/-Users-liblab-Documents-MILK-BROS-wp-theme/6cd97672-4a87-4ba2-835d-3d0959a5df40/scratchpad/build/milkbros/)",
+      "Bash(cp -R '/Users/liblab/Documents/MILK BROS/wp-theme/assets' /private/tmp/claude-501/-Users-liblab-Documents-MILK-BROS-wp-theme/6cd97672-4a87-4ba2-835d-3d0959a5df40/scratchpad/build/milkbros/assets)",
+      "Bash(zip -rX -q milkbros.zip milkbros -x \"*.DS_Store\")",
+      "Bash(cp milkbros.zip \"/Users/liblab/Documents/MILK BROS/milkbros.zip\")",
+      "Bash(git --version)"
+    ]
+  }
+}

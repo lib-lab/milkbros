@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920">
+  <rect width="1080" height="1920" fill="#2f5ea8"/>
+  <rect x="70" y="70" width="940" height="1780" fill="none" stroke="rgba(245,237,216,0.85)" stroke-width="6"/>
+  <rect x="100" y="100" width="880" height="1720" fill="none" stroke="rgba(245,237,216,0.5)" stroke-width="2"/>
+  <text x="540" y="300" font-family="Menlo, Consolas, monospace" font-size="76" font-weight="bold" letter-spacing="10" fill="#f5edd8" text-anchor="middle">MILK BROS</text>
+  <text x="540" y="370" font-family="Menlo, Consolas, monospace" font-size="34" letter-spacing="14" fill="rgba(245,237,216,0.8)" text-anchor="middle">BREWING CO.</text>
+  <line x1="240" y1="430" x2="840" y2="430" stroke="rgba(245,237,216,0.6)" stroke-width="3"/>
+  <text x="540" y="1120" font-family="Menlo, Consolas, monospace" font-size="420" font-weight="bold" fill="rgba(0,0,0,0.28)" text-anchor="middle">04</text>
+  <text x="540" y="1560" font-family="Menlo, Consolas, monospace" font-size="52" letter-spacing="8" fill="#f5edd8" text-anchor="middle">NIGHT BLUE</text>
+  <line x1="240" y1="1620" x2="840" y2="1620" stroke="rgba(245,237,216,0.6)" stroke-width="3"/>
+  <text x="540" y="1700" font-family="Menlo, Consolas, monospace" font-size="40" letter-spacing="6" fill="rgba(245,237,216,0.85)" text-anchor="middle">ЭТИКЕТКА 04/05</text>
+</svg>
