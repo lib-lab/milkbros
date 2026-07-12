@@ -4,6 +4,7 @@
  */
 
 $milkbros_slides = milkbros_get_slides();
+$milkbros_texts  = milkbros_get_overlay_texts();
 ?><!doctype html>
 <html <?php language_attributes(); ?>>
 <head>
@@ -23,9 +24,12 @@ $milkbros_slides = milkbros_get_slides();
 </main>
 
 <aside class="mb-info">
-<?php foreach ( milkbros_get_overlay_texts() as $i => $text ) : ?>
-	<div class="mb-info__text<?php echo 0 === $i ? ' is-active' : ''; ?>" data-info<?php echo 0 === $i ? '' : ' hidden'; ?>>
-		<?php echo nl2br( esc_html( $text ) ); ?><span class="mb-cursor" aria-hidden="true"></span>
+<?php foreach ( $milkbros_texts as $i => $pair ) : ?>
+	<div class="mb-info__text<?php echo 0 === $i ? ' is-active' : ''; ?>" data-info="<?php echo (int) $i; ?>" data-lang="ru"<?php echo 0 === $i ? '' : ' hidden'; ?>>
+		<?php echo nl2br( esc_html( $pair['ru'] ) ); ?><span class="mb-cursor" aria-hidden="true"></span>
+	</div>
+	<div class="mb-info__text" data-info="<?php echo (int) $i; ?>" data-lang="en" hidden>
+		<?php echo nl2br( esc_html( $pair['en'] ) ); ?><span class="mb-cursor" aria-hidden="true"></span>
 	</div>
 <?php endforeach; ?>
 </aside>
@@ -40,27 +44,31 @@ $milkbros_slides = milkbros_get_slides();
 	<button type="button" class="mb-arrow" data-next aria-label="Следующий слайд">&#8250;</button>
 </nav>
 
-<button type="button" class="mb-fb-open" data-fb-open>Обратная связь</button>
+<button type="button" class="mb-lang" data-lang-toggle aria-label="Язык / Language">
+	<span class="mb-lang__opt is-on" data-lang-opt="ru">RU</span><span class="mb-lang__sep">/</span><span class="mb-lang__opt" data-lang-opt="en">EN</span>
+</button>
+
+<button type="button" class="mb-fb-open" data-fb-open data-i18n="fbOpen">Обратная связь</button>
 
 <div class="mb-modal" data-modal hidden>
 	<div class="mb-modal__backdrop" data-modal-close></div>
 	<section class="mb-modal__panel" role="dialog" aria-modal="true" aria-label="Обратная связь">
 		<button type="button" class="mb-modal__x" data-modal-close aria-label="Закрыть">&times;</button>
-		<h2 class="mb-modal__title">// обратная связь</h2>
+		<h2 class="mb-modal__title" data-i18n="fbTitle">// обратная связь</h2>
 		<form class="mb-form" data-fb-form novalidate>
 			<label class="mb-field">
-				<span>&gt; ваш email</span>
+				<span data-i18n="email">&gt; ваш email</span>
 				<input type="email" name="email" required autocomplete="email" spellcheck="false">
 			</label>
 			<label class="mb-field">
-				<span>&gt; сообщение</span>
+				<span data-i18n="message">&gt; сообщение</span>
 				<textarea name="message" rows="5" required maxlength="5000"></textarea>
 			</label>
 			<input type="text" name="mb_hp" class="mb-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 			<p class="mb-form__status" data-fb-status role="status"></p>
-			<button type="submit" class="mb-form__submit" data-fb-submit>Отправить</button>
+			<button type="submit" class="mb-form__submit" data-fb-submit data-i18n="send">Отправить</button>
 		</form>
-		<p class="mb-form__done" data-fb-done hidden>Спасибо, ваше письмо отправлено!</p>
+		<p class="mb-form__done" data-fb-done data-i18n="done" hidden>Спасибо, ваше письмо отправлено!</p>
 	</section>
 </div>
 

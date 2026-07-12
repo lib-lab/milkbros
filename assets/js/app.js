@@ -3,6 +3,54 @@
 
 	var cfg = window.milkbrosCfg || {};
 
+	/* ---------- Словарь интерфейса ---------- */
+
+	var I18N = {
+		ru: {
+			fbOpen: 'Обратная связь',
+			fbTitle: '// обратная связь',
+			email: '> ваш email',
+			message: '> сообщение',
+			send: 'Отправить',
+			sending: 'Отправка…',
+			done: 'Спасибо, ваше письмо отправлено!',
+			errEmail: 'Укажите корректный email.',
+			errMessage: 'Напишите сообщение.',
+			errNet: 'Ошибка сети. Попробуйте позже.',
+			errSend: 'Не удалось отправить письмо. Попробуйте позже.',
+			errWait: 'Слишком часто. Подождите полминуты.'
+		},
+		en: {
+			fbOpen: 'Contact us',
+			fbTitle: '// contact',
+			email: '> your email',
+			message: '> message',
+			send: 'Send',
+			sending: 'Sending…',
+			done: 'Thank you, your message has been sent!',
+			errEmail: 'Please enter a valid email.',
+			errMessage: 'Please write a message.',
+			errNet: 'Network error. Please try again later.',
+			errSend: 'Could not send the message. Please try again later.',
+			errWait: 'Too many requests — wait half a minute.'
+		}
+	};
+
+	// Ошибки сервер присылает по-русски — сопоставление для перевода.
+	var SERVER_MSG = {
+		'Укажите корректный email.': 'errEmail',
+		'Напишите сообщение.': 'errMessage',
+		'Не удалось отправить письмо. Попробуйте позже.': 'errSend',
+		'Слишком часто. Подождите полминуты.': 'errWait'
+	};
+
+	var lang = 'ru';
+	try {
+		if (localStorage.getItem('mb_lang') === 'en') { lang = 'en'; }
+	} catch (e) {}
+
+	function t(key) { return I18N[lang][key]; }
+
 	/* ---------- Галерея ---------- */
 
 	var slides  = Array.prototype.slice.call(document.querySelectorAll('[data-slide]'));
@@ -12,6 +60,16 @@
 	var nextBtn = document.querySelector('[data-next]');
 	var current = 0;
 	var autoTimer = null;
+
+	// Видим только текст активного слайда на активном языке.
+	function syncInfos() {
+		infos.forEach(function (el) {
+			var on = Number(el.getAttribute('data-info')) === current &&
+				el.getAttribute('data-lang') === lang;
+			el.classList.toggle('is-active', on);
+			el.hidden = !on;
+		});
+	}
 
 	function show(i) {
 		if (!slides.length) { return; }
@@ -27,10 +85,7 @@
 				dot.removeAttribute('aria-current');
 			}
 		});
-		infos.forEach(function (info, n) {
-			info.classList.toggle('is-active', n === current);
-			info.hidden = n !== current;
-		});
+		syncInfos();
 	}
 
 	function stopAuto() {
@@ -67,6 +122,35 @@
 	var doneEl    = document.querySelector('[data-fb-done]');
 	var submitBtn = document.querySelector('[data-fb-submit]');
 
+	/* ---------- Переключатель языка ---------- */
+
+	var langBtn = document.querySelector('[data-lang-toggle]');
+
+	function applyLang() {
+		document.documentElement.setAttribute('lang', lang === 'en' ? 'en' : 'ru-RU');
+		Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) {
+			if (el === submitBtn && submitBtn.disabled) { return; } // идёт отправка
+			var key = el.getAttribute('data-i18n');
+			if (I18N[lang][key]) { el.textContent = I18N[lang][key]; }
+		});
+		if (langBtn) {
+			Array.prototype.forEach.call(langBtn.querySelectorAll('[data-lang-opt]'), function (opt) {
+				opt.classList.toggle('is-on', opt.getAttribute('data-lang-opt') === lang);
+			});
+		}
+		syncInfos();
+	}
+
+	if (langBtn) {
+		langBtn.addEventListener('click', function () {
+			lang = lang === 'ru' ? 'en' : 'ru';
+			try { localStorage.setItem('mb_lang', lang); } catch (e) {}
+			applyLang();
+		});
+	}
+
+	/* ---------- Модалка ---------- */
+
 	function modalOpen() {
 		return !!modal && !modal.hidden;
 	}
@@ -87,7 +171,7 @@
 		if (statusEl) { statusEl.textContent = ''; }
 		if (submitBtn) {
 			submitBtn.disabled = false;
-			submitBtn.textContent = 'Отправить';
+			submitBtn.textContent = t('send');
 		}
 	}
 
@@ -132,17 +216,17 @@
 			var message = form.elements.message.value.trim();
 
 			if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-				statusEl.textContent = 'Укажите корректный email.';
+				statusEl.textContent = t('errEmail');
 				return;
 			}
 			if (!message) {
-				statusEl.textContent = 'Напишите сообщение.';
+				statusEl.textContent = t('errMessage');
 				return;
 			}
 
 			statusEl.textContent = '';
 			submitBtn.disabled = true;
-			submitBtn.textContent = 'Отправка…';
+			submitBtn.textContent = t('sending');
 
 			var fd = new FormData(form);
 			fd.append('action', 'milkbros_feedback');
@@ -155,18 +239,21 @@
 						form.hidden = true;
 						if (doneEl) { doneEl.hidden = false; }
 					} else {
-						statusEl.textContent =
-							(data && data.data && data.data.message) ||
-							'Не удалось отправить. Попробуйте позже.';
+						var raw = (data && data.data && data.data.message) || '';
+						statusEl.textContent = SERVER_MSG[raw] ? t(SERVER_MSG[raw]) : (raw || t('errSend'));
 					}
 				})
 				.catch(function () {
-					statusEl.textContent = 'Ошибка сети. Попробуйте позже.';
+					statusEl.textContent = t('errNet');
 				})
 				.finally(function () {
 					submitBtn.disabled = false;
-					submitBtn.textContent = 'Отправить';
+					submitBtn.textContent = t('send');
 				});
 		});
 	}
+
+	/* ---------- Старт ---------- */
+
+	applyLang();
 })();

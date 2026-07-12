@@ -2,7 +2,7 @@
 Theme Name: MILK BROS
 Description: Одностраничная тема пивоварни MILK BROS: полноэкранная галерея этикеток с автопрокруткой, терминальный блок с составом и форма обратной связи.
 Author: MILK BROS
-Version: 1.0.1
+Version: 1.1.0
 Requires at least: 6.0
 Requires PHP: 7.4
 License: GNU General Public License v2 or later
@@ -20,6 +20,7 @@ Text Domain: milkbros
     --mb-panel-solid: rgba(3, 10, 5, 0.92);
     --mb-edge: clamp(16px, 3vw, 32px);
     --mb-edge-bottom: calc(var(--mb-edge) + env(safe-area-inset-bottom, 0px));
+    --mb-edge-top: calc(var(--mb-edge) + env(safe-area-inset-top, 0px));
     --mb-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 }
 
@@ -79,7 +80,7 @@ button {
 
 .mb-info {
     position: fixed;
-    top: var(--mb-edge);
+    top: var(--mb-edge-top);
     right: var(--mb-edge);
     z-index: 40;
     width: min(340px, calc(100vw - 2 * var(--mb-edge)));
@@ -96,6 +97,13 @@ button {
     letter-spacing: 0.02em;
     text-shadow: 0 0 7px rgba(61, 255, 110, 0.35);
     overflow-wrap: break-word;
+}
+
+/* Под чёрным админ-баром WordPress (виден только залогиненным) — тот же отступ */
+body.admin-bar .mb-info { top: calc(var(--mb-edge-top) + 32px); }
+
+@media (max-width: 782px) {
+    body.admin-bar .mb-info { top: calc(var(--mb-edge-top) + 46px); }
 }
 
 .mb-info::after {
@@ -204,6 +212,38 @@ button {
 }
 
 .mb-fb-open:hover { background: rgba(61, 255, 110, 0.14); }
+
+/* ---------- Переключатель языка (левый нижний угол) ---------- */
+
+.mb-lang {
+    position: fixed;
+    left: var(--mb-edge);
+    bottom: var(--mb-edge-bottom);
+    z-index: 40;
+    padding: 12px 16px;
+    background: var(--mb-panel);
+    border: 1px solid var(--mb-green-faint);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    color: var(--mb-green);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+}
+
+.mb-lang:hover { background: rgba(61, 255, 110, 0.14); }
+
+.mb-lang__opt { opacity: 0.4; }
+
+.mb-lang__opt.is-on {
+    opacity: 1;
+    text-shadow: 0 0 7px rgba(61, 255, 110, 0.35);
+}
+
+.mb-lang__sep {
+    opacity: 0.3;
+    margin: 0 6px;
+}
 
 /* ---------- Модальное окно с формой ---------- */
 
@@ -340,6 +380,11 @@ button {
     .mb-nav {
         left: var(--mb-edge);
         transform: none;
+    }
+
+    /* Переключатель языка — над навигацией, чтобы не толкались */
+    .mb-lang {
+        bottom: calc(var(--mb-edge-bottom) + 54px);
     }
 }
 

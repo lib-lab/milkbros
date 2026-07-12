@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MILKBROS_VERSION', '1.0.1' );
+define( 'MILKBROS_VERSION', '1.1.0' );
 define( 'MILKBROS_SLIDE_COUNT', 5 );
 
 add_action( 'after_setup_theme', function () {
@@ -53,14 +53,21 @@ function milkbros_default_overlay_texts() {
 }
 
 /**
- * Тексты пяти составов: из кастомайзера, для пустых — значения по умолчанию.
+ * Тексты пяти составов в двух языках: русский — из кастомайзера или по умолчанию,
+ * английский — из кастомайзера, а пока не заполнен — тот же русский текст.
  */
 function milkbros_get_overlay_texts() {
 	$defaults = milkbros_default_overlay_texts();
 	$texts    = array();
 	for ( $i = 1; $i <= MILKBROS_SLIDE_COUNT; $i++ ) {
-		$text    = get_theme_mod( "milkbros_overlay_text_{$i}", '' );
-		$texts[] = ( '' !== $text ) ? $text : $defaults[ $i ];
+		$ru = get_theme_mod( "milkbros_overlay_text_{$i}", '' );
+		$ru = ( '' !== $ru ) ? $ru : $defaults[ $i ];
+		$en = get_theme_mod( "milkbros_overlay_text_en_{$i}", '' );
+
+		$texts[] = array(
+			'ru' => $ru,
+			'en' => ( '' !== $en ) ? $en : $ru,
+		);
 	}
 	return $texts;
 }
@@ -99,6 +106,17 @@ add_action( 'customize_register', function ( $wp_customize ) {
 			'label'   => "Состав — слайд {$i}",
 			'section' => 'milkbros',
 			'type'    => 'textarea',
+		) );
+
+		$wp_customize->add_setting( "milkbros_overlay_text_en_{$i}", array(
+			'default'           => '',
+			'sanitize_callback' => 'sanitize_textarea_field',
+		) );
+		$wp_customize->add_control( "milkbros_overlay_text_en_{$i}", array(
+			'label'       => "Состав (EN) — слайд {$i}",
+			'description' => 'Если пусто — в английской версии показывается русский текст.',
+			'section'     => 'milkbros',
+			'type'        => 'textarea',
 		) );
 	}
 
