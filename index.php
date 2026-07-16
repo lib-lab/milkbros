@@ -25,17 +25,27 @@ $milkbros_lang   = milkbros_get_default_lang();
 </main>
 
 <aside class="mb-info">
+	<div class="mb-info__bar">
+		<button type="button" class="mb-lang" data-lang-toggle aria-label="Язык / Language">
+			<span class="mb-lang__opt<?php echo 'ru' === $milkbros_lang ? ' is-on' : ''; ?>" data-lang-opt="ru">RU</span><span class="mb-lang__sep">/</span><span class="mb-lang__opt<?php echo 'en' === $milkbros_lang ? ' is-on' : ''; ?>" data-lang-opt="en">EN</span>
+		</button>
+		<button type="button" class="mb-info__x" data-info-min data-i18n-aria="infoMin" aria-label="Свернуть описание">&times;</button>
+	</div>
 <?php foreach ( $milkbros_texts as $i => $pair ) : ?>
 	<?php $milkbros_ru_on = ( 0 === $i && 'ru' === $milkbros_lang ); ?>
 	<?php $milkbros_en_on = ( 0 === $i && 'en' === $milkbros_lang ); ?>
 	<div class="mb-info__text<?php echo $milkbros_ru_on ? ' is-active' : ''; ?>" data-info="<?php echo (int) $i; ?>" data-lang="ru"<?php echo $milkbros_ru_on ? '' : ' hidden'; ?>>
-		<?php echo nl2br( esc_html( $pair['ru'] ) ); ?><span class="mb-cursor" aria-hidden="true"></span>
+		<?php echo milkbros_format_overlay_text( $pair['ru'] ); ?><span class="mb-cursor" aria-hidden="true"></span>
 	</div>
 	<div class="mb-info__text<?php echo $milkbros_en_on ? ' is-active' : ''; ?>" data-info="<?php echo (int) $i; ?>" data-lang="en"<?php echo $milkbros_en_on ? '' : ' hidden'; ?>>
-		<?php echo nl2br( esc_html( $pair['en'] ) ); ?><span class="mb-cursor" aria-hidden="true"></span>
+		<?php echo milkbros_format_overlay_text( $pair['en'] ); ?><span class="mb-cursor" aria-hidden="true"></span>
 	</div>
 <?php endforeach; ?>
 </aside>
+
+<button type="button" class="mb-info-dot" data-info-restore data-i18n-aria="infoShow" aria-label="Показать описание" hidden>
+	<span class="mb-info-dot__blink" aria-hidden="true"></span>
+</button>
 
 <nav class="mb-nav" aria-label="Управление галереей">
 	<button type="button" class="mb-arrow" data-prev aria-label="Предыдущий слайд">&#8249;</button>
@@ -46,10 +56,6 @@ $milkbros_lang   = milkbros_get_default_lang();
 	</div>
 	<button type="button" class="mb-arrow" data-next aria-label="Следующий слайд">&#8250;</button>
 </nav>
-
-<button type="button" class="mb-lang" data-lang-toggle aria-label="Язык / Language">
-	<span class="mb-lang__opt is-on" data-lang-opt="ru">RU</span><span class="mb-lang__sep">/</span><span class="mb-lang__opt" data-lang-opt="en">EN</span>
-</button>
 
 <button type="button" class="mb-fb-open" data-fb-open data-i18n="fbOpen">Обратная связь</button>
 

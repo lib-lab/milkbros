@@ -2,7 +2,7 @@
 Theme Name: MILK BROS
 Description: Одностраничная тема пивоварни MILK BROS: полноэкранная галерея этикеток с автопрокруткой, терминальный блок с составом и форма обратной связи.
 Author: MILK BROS
-Version: 1.1.1
+Version: 1.2.0
 Requires at least: 6.0
 Requires PHP: 7.4
 License: GNU General Public License v2 or later
@@ -82,6 +82,8 @@ button {
     position: fixed;
     top: var(--mb-edge-top);
     right: var(--mb-edge);
+    transition: transform 0.35s ease, opacity 0.35s ease;
+    transform-origin: top right;
     z-index: 40;
     width: min(340px, calc(100vw - 2 * var(--mb-edge)));
     max-height: calc(100vh - var(--mb-edge) - var(--mb-edge-bottom) - 72px);
@@ -99,11 +101,75 @@ button {
     overflow-wrap: break-word;
 }
 
+/* Свёрнутое состояние: панель «убегает» в правый верхний угол */
+.mb-info.is-min {
+    transform: scale(0.04);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Шапка панели: переключатель языка слева, крестик справа */
+.mb-info__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.mb-info__x {
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    margin: -2px -4px 0 12px;
+    background: none;
+    border: none;
+    color: var(--mb-green);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.mb-info__x:hover { text-shadow: 0 0 9px var(--mb-green); }
+
+/* Кнопка-точка на месте свёрнутой панели */
+.mb-info-dot {
+    position: fixed;
+    top: var(--mb-edge-top);
+    right: var(--mb-edge);
+    z-index: 40;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: var(--mb-panel);
+    border: 1px solid var(--mb-green-faint);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    cursor: pointer;
+}
+
+.mb-info-dot__blink {
+    display: block;
+    width: 9px;
+    height: 9px;
+    margin: 0 auto;
+    background: var(--mb-green);
+    box-shadow: 0 0 8px rgba(61, 255, 110, 0.6);
+    animation: mb-blink 1.1s steps(1) infinite;
+}
+
+.mb-info-dot:hover .mb-info-dot__blink { animation-play-state: paused; }
+
+/* Жирный и курсив из разметки [b]/[i] */
+.mb-info strong { font-weight: 700; }
+.mb-info em { font-style: italic; }
+
 /* Под чёрным админ-баром WordPress (виден только залогиненным) — тот же отступ */
-body.admin-bar .mb-info { top: calc(var(--mb-edge-top) + 32px); }
+body.admin-bar .mb-info,
+body.admin-bar .mb-info-dot { top: calc(var(--mb-edge-top) + 32px); }
 
 @media (max-width: 782px) {
-    body.admin-bar .mb-info { top: calc(var(--mb-edge-top) + 46px); }
+    body.admin-bar .mb-info,
+    body.admin-bar .mb-info-dot { top: calc(var(--mb-edge-top) + 46px); }
 }
 
 .mb-info::after {
@@ -213,25 +279,20 @@ body.admin-bar .mb-info { top: calc(var(--mb-edge-top) + 32px); }
 
 .mb-fb-open:hover { background: rgba(61, 255, 110, 0.14); }
 
-/* ---------- Переключатель языка (левый нижний угол) ---------- */
+/* ---------- Переключатель языка (в шапке панели описания) ---------- */
 
 .mb-lang {
-    position: fixed;
-    left: var(--mb-edge);
-    bottom: var(--mb-edge-bottom);
-    z-index: 40;
-    padding: 12px 16px;
-    background: var(--mb-panel);
-    border: 1px solid var(--mb-green-faint);
-    -webkit-backdrop-filter: blur(6px);
-    backdrop-filter: blur(6px);
+    padding: 0;
+    background: none;
+    border: none;
     color: var(--mb-green);
-    font-size: 13px;
+    font-family: inherit;
+    font-size: 12px;
     letter-spacing: 0.08em;
     cursor: pointer;
 }
 
-.mb-lang:hover { background: rgba(61, 255, 110, 0.14); }
+.mb-lang:hover { text-shadow: 0 0 9px var(--mb-green); }
 
 .mb-lang__opt { opacity: 0.4; }
 
@@ -381,11 +442,6 @@ body.admin-bar .mb-info { top: calc(var(--mb-edge-top) + 32px); }
         left: var(--mb-edge);
         transform: none;
     }
-
-    /* Переключатель языка — над навигацией, чтобы не толкались */
-    .mb-lang {
-        bottom: calc(var(--mb-edge-bottom) + 54px);
-    }
 }
 
 @media (max-width: 400px) {
@@ -400,4 +456,6 @@ body.admin-bar .mb-info { top: calc(var(--mb-edge-top) + 32px); }
     .mb-slide { transition: none; }
     .mb-cursor { animation: none; }
     .mb-info__text.is-active { animation: none; }
+    .mb-info { transition: none; }
+    .mb-info-dot__blink { animation: none; }
 }

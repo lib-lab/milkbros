@@ -18,7 +18,9 @@
 			errMessage: 'Напишите сообщение.',
 			errNet: 'Ошибка сети. Попробуйте позже.',
 			errSend: 'Не удалось отправить письмо. Попробуйте позже.',
-			errWait: 'Слишком часто. Подождите полминуты.'
+			errWait: 'Слишком часто. Подождите полминуты.',
+			infoMin: 'Свернуть описание',
+			infoShow: 'Показать описание'
 		},
 		en: {
 			fbOpen: 'Contact us',
@@ -32,7 +34,9 @@
 			errMessage: 'Please write a message.',
 			errNet: 'Network error. Please try again later.',
 			errSend: 'Could not send the message. Please try again later.',
-			errWait: 'Too many requests — wait half a minute.'
+			errWait: 'Too many requests — wait half a minute.',
+			infoMin: 'Minimize description',
+			infoShow: 'Show description'
 		}
 	};
 
@@ -135,6 +139,10 @@
 			var key = el.getAttribute('data-i18n');
 			if (I18N[lang][key]) { el.textContent = I18N[lang][key]; }
 		});
+		Array.prototype.forEach.call(document.querySelectorAll('[data-i18n-aria]'), function (el) {
+			var key = el.getAttribute('data-i18n-aria');
+			if (I18N[lang][key]) { el.setAttribute('aria-label', I18N[lang][key]); }
+		});
 		if (langBtn) {
 			Array.prototype.forEach.call(langBtn.querySelectorAll('[data-lang-opt]'), function (opt) {
 				opt.classList.toggle('is-on', opt.getAttribute('data-lang-opt') === lang);
@@ -148,6 +156,32 @@
 			lang = lang === 'ru' ? 'en' : 'ru';
 			try { localStorage.setItem('mb_lang', lang); } catch (e) {}
 			applyLang();
+		});
+	}
+
+	/* ---------- Сворачивание панели описания ---------- */
+
+	var infoPanel   = document.querySelector('.mb-info');
+	var infoMinBtn  = document.querySelector('[data-info-min]');
+	var infoDot     = document.querySelector('[data-info-restore]');
+
+	function setInfoMin(min) {
+		if (!infoPanel || !infoDot) { return; }
+		infoPanel.classList.toggle('is-min', min);
+		infoPanel.setAttribute('aria-hidden', min ? 'true' : 'false');
+		infoDot.hidden = !min;
+	}
+
+	if (infoMinBtn) {
+		infoMinBtn.addEventListener('click', function () {
+			setInfoMin(true);
+			if (infoDot) { infoDot.focus(); }
+		});
+	}
+	if (infoDot) {
+		infoDot.addEventListener('click', function () {
+			setInfoMin(false);
+			if (infoMinBtn) { infoMinBtn.focus(); }
 		});
 	}
 

@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MILKBROS_VERSION', '1.1.1' );
+define( 'MILKBROS_VERSION', '1.2.0' );
 define( 'MILKBROS_SLIDE_COUNT', 5 );
 
 add_action( 'after_setup_theme', function () {
@@ -74,6 +74,19 @@ function milkbros_get_overlay_texts() {
 }
 
 /**
+ * Текст состава → HTML: экранирование, переносы строк и простая разметка
+ * [b]жирный[/b], [i]курсив[/i].
+ */
+function milkbros_format_overlay_text( $text ) {
+	$html = nl2br( esc_html( $text ) );
+	return str_replace(
+		array( '[b]', '[/b]', '[i]', '[/i]' ),
+		array( '<strong>', '</strong>', '<em>', '</em>' ),
+		$html
+	);
+}
+
+/**
  * Язык по умолчанию для посетителей, которые ещё не выбрали свой
  * кнопкой RU/EN. Настраивается в кастомайзере.
  */
@@ -92,8 +105,9 @@ function milkbros_get_feedback_email() {
 
 add_action( 'customize_register', function ( $wp_customize ) {
 	$wp_customize->add_section( 'milkbros', array(
-		'title'    => 'MILK BROS: галерея и контакты',
-		'priority' => 10,
+		'title'       => 'MILK BROS: галерея и контакты',
+		'description' => 'В текстах составов работают переносы строк и разметка: [b]жирный[/b], [i]курсив[/i].',
+		'priority'    => 10,
 	) );
 
 	$wp_customize->add_setting( 'milkbros_default_lang', array(
