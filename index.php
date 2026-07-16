@@ -35,16 +35,16 @@ $milkbros_lang   = milkbros_get_default_lang();
 	<?php $milkbros_ru_on = ( 0 === $i && 'ru' === $milkbros_lang ); ?>
 	<?php $milkbros_en_on = ( 0 === $i && 'en' === $milkbros_lang ); ?>
 	<div class="mb-info__text<?php echo $milkbros_ru_on ? ' is-active' : ''; ?>" data-info="<?php echo (int) $i; ?>" data-lang="ru"<?php echo $milkbros_ru_on ? '' : ' hidden'; ?>>
-		<?php echo milkbros_format_overlay_text( $pair['ru'] ); ?><span class="mb-cursor" aria-hidden="true"></span>
+		<?php echo milkbros_format_overlay_text( $pair['ru'] ); ?>
 	</div>
 	<div class="mb-info__text<?php echo $milkbros_en_on ? ' is-active' : ''; ?>" data-info="<?php echo (int) $i; ?>" data-lang="en"<?php echo $milkbros_en_on ? '' : ' hidden'; ?>>
-		<?php echo milkbros_format_overlay_text( $pair['en'] ); ?><span class="mb-cursor" aria-hidden="true"></span>
+		<?php echo milkbros_format_overlay_text( $pair['en'] ); ?>
 	</div>
 <?php endforeach; ?>
 </aside>
 
 <button type="button" class="mb-info-dot" data-info-restore data-i18n-aria="infoShow" aria-label="Показать описание" hidden>
-	<span class="mb-info-dot__blink" aria-hidden="true"></span>
+	<span class="mb-info-dot__mark" aria-hidden="true"></span>
 </button>
 
 <nav class="mb-nav" aria-label="Управление галереей">
