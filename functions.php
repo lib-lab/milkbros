@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MILKBROS_VERSION', '1.3.1' );
+define( 'MILKBROS_VERSION', '1.3.2' );
 define( 'MILKBROS_MAX_SLIDES', 5 );
 
 add_action( 'after_setup_theme', function () {
@@ -71,6 +71,19 @@ function milkbros_get_slide_data() {
 	}
 
 	return $slides;
+}
+
+/**
+ * Названия сортов по слотам — заголовки разделов в кастомайзере.
+ */
+function milkbros_slot_names() {
+	return array(
+		1 => 'Красный флаг',
+		2 => 'Иммигрант',
+		3 => 'Пионерка',
+		4 => 'Ковабанга',
+		5 => 'ИПА',
+	);
 }
 
 /**
@@ -157,11 +170,12 @@ add_action( 'customize_register', function ( $wp_customize ) {
 	) );
 
 	$overlay_defaults = milkbros_default_overlay_texts();
+	$slot_names       = milkbros_slot_names();
 
 	for ( $i = 1; $i <= MILKBROS_MAX_SLIDES; $i++ ) {
 		$wp_customize->add_section( "milkbros_slide_sec_{$i}", array(
 			'panel' => 'milkbros',
-			'title' => "Сорт {$i}",
+			'title' => isset( $slot_names[ $i ] ) ? $slot_names[ $i ] : "Сорт {$i}",
 		) );
 
 		$wp_customize->add_setting( "milkbros_slide_on_{$i}", array(
