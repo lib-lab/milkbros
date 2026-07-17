@@ -3,8 +3,7 @@
  * Единственный шаблон темы: полноэкранная галерея, инфоблок и форма обратной связи.
  */
 
-$milkbros_slides = milkbros_get_slides();
-$milkbros_texts  = milkbros_get_overlay_texts();
+$milkbros_slides = milkbros_get_slide_data();
 $milkbros_lang   = milkbros_get_default_lang();
 ?><!doctype html>
 <html <?php language_attributes(); ?>>
@@ -17,9 +16,9 @@ $milkbros_lang   = milkbros_get_default_lang();
 <?php if ( function_exists( 'wp_body_open' ) ) { wp_body_open(); } ?>
 
 <main class="mb-stage" aria-label="Галерея">
-<?php foreach ( $milkbros_slides as $i => $url ) : ?>
+<?php foreach ( $milkbros_slides as $i => $slide ) : ?>
 	<div class="mb-slide<?php echo 0 === $i ? ' is-active' : ''; ?>" data-slide>
-		<img src="<?php echo esc_url( $url ); ?>" alt="<?php echo esc_attr( 'Этикетка ' . ( $i + 1 ) ); ?>" decoding="async">
+		<img src="<?php echo esc_url( $slide['img'] ); ?>" alt="<?php echo esc_attr( 'Этикетка ' . ( $i + 1 ) ); ?>" decoding="async">
 	</div>
 <?php endforeach; ?>
 </main>
@@ -31,14 +30,14 @@ $milkbros_lang   = milkbros_get_default_lang();
 		</button>
 		<button type="button" class="mb-info__x" data-info-min data-i18n-aria="infoMin" aria-label="Свернуть описание">&times;</button>
 	</div>
-<?php foreach ( $milkbros_texts as $i => $pair ) : ?>
+<?php foreach ( $milkbros_slides as $i => $slide ) : ?>
 	<?php $milkbros_ru_on = ( 0 === $i && 'ru' === $milkbros_lang ); ?>
 	<?php $milkbros_en_on = ( 0 === $i && 'en' === $milkbros_lang ); ?>
 	<div class="mb-info__text<?php echo $milkbros_ru_on ? ' is-active' : ''; ?>" data-info="<?php echo (int) $i; ?>" data-lang="ru"<?php echo $milkbros_ru_on ? '' : ' hidden'; ?>>
-		<?php echo milkbros_format_overlay_text( $pair['ru'] ); ?>
+		<?php echo milkbros_format_overlay_text( $slide['ru'] ); ?>
 	</div>
 	<div class="mb-info__text<?php echo $milkbros_en_on ? ' is-active' : ''; ?>" data-info="<?php echo (int) $i; ?>" data-lang="en"<?php echo $milkbros_en_on ? '' : ' hidden'; ?>>
-		<?php echo milkbros_format_overlay_text( $pair['en'] ); ?>
+		<?php echo milkbros_format_overlay_text( $slide['en'] ); ?>
 	</div>
 <?php endforeach; ?>
 </aside>
@@ -47,15 +46,17 @@ $milkbros_lang   = milkbros_get_default_lang();
 	<span class="mb-info-dot__mark" aria-hidden="true"></span>
 </button>
 
+<?php if ( count( $milkbros_slides ) > 1 ) : ?>
 <nav class="mb-nav" aria-label="Управление галереей">
 	<button type="button" class="mb-arrow" data-prev aria-label="Предыдущий слайд">&#8249;</button>
 	<div class="mb-dots">
-	<?php foreach ( $milkbros_slides as $i => $url ) : ?>
+	<?php foreach ( $milkbros_slides as $i => $slide ) : ?>
 		<button type="button" class="mb-dot<?php echo 0 === $i ? ' is-active' : ''; ?>" data-dot<?php echo 0 === $i ? ' aria-current="true"' : ''; ?> aria-label="Слайд <?php echo (int) ( $i + 1 ); ?>"></button>
 	<?php endforeach; ?>
 	</div>
 	<button type="button" class="mb-arrow" data-next aria-label="Следующий слайд">&#8250;</button>
 </nav>
+<?php endif; ?>
 
 <button type="button" class="mb-fb-open" data-fb-open data-i18n="fbOpen">Обратная связь</button>
 

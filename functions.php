@@ -2,16 +2,16 @@
 /**
  * MILK BROS — одностраничная тема.
  *
- * Картинки галереи, текст инфоблока и email для формы обратной связи
- * настраиваются в «Внешний вид → Настроить → MILK BROS: галерея и контакты».
+ * Сорта (этикетки, составы, видимость), язык по умолчанию и email формы
+ * настраиваются в «Внешний вид → Настроить → MILK BROS: сорта и контакты».
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MILKBROS_VERSION', '1.2.1' );
-define( 'MILKBROS_SLIDE_COUNT', 5 );
+define( 'MILKBROS_VERSION', '1.3.0' );
+define( 'MILKBROS_MAX_SLIDES', 10 );
 
 add_action( 'after_setup_theme', function () {
 	add_theme_support( 'title-tag' );
@@ -29,14 +29,47 @@ add_action( 'wp_enqueue_scripts', function () {
 } );
 
 /**
- * URL-ы пяти слайдов: из кастомайзера, для пустых — заглушки из темы.
+ * Данные видимых сортов: картинка этикетки и составы RU/EN.
+ * Слот попадает на сайт, если включена галочка «Показывать этот сорт»
+ * (по умолчанию включены первые пять). Пустая картинка — заглушка из темы,
+ * пустой RU-текст — текст по умолчанию, пустой EN — тот же русский текст.
  */
-function milkbros_get_slides() {
-	$slides = array();
-	for ( $i = 1; $i <= MILKBROS_SLIDE_COUNT; $i++ ) {
-		$url      = get_theme_mod( "milkbros_slide_{$i}", '' );
-		$slides[] = $url ? $url : get_theme_file_uri( "assets/slides/slide-{$i}.svg" );
+function milkbros_get_slide_data() {
+	$defaults = milkbros_default_overlay_texts();
+	$slides   = array();
+
+	for ( $i = 1; $i <= MILKBROS_MAX_SLIDES; $i++ ) {
+		if ( ! get_theme_mod( "milkbros_slide_on_{$i}", $i <= 5 ) ) {
+			continue;
+		}
+
+		$img = get_theme_mod( "milkbros_slide_{$i}", '' );
+		if ( ! $img ) {
+			$img = get_theme_file_uri( 'assets/slides/slide-' . ( ( $i - 1 ) % 5 + 1 ) . '.svg' );
+		}
+
+		$ru = get_theme_mod( "milkbros_overlay_text_{$i}", '' );
+		if ( '' === $ru ) {
+			$ru = isset( $defaults[ $i ] ) ? $defaults[ $i ] : 'MILK BROS';
+		}
+		$en = get_theme_mod( "milkbros_overlay_text_en_{$i}", '' );
+
+		$slides[] = array(
+			'img' => $img,
+			'ru'  => $ru,
+			'en'  => ( '' !== $en ) ? $en : $ru,
+		);
 	}
+
+	// Если скрыли вообще все сорта — показываем первый слот, чтобы сайт не опустел.
+	if ( ! $slides ) {
+		$slides[] = array(
+			'img' => get_theme_file_uri( 'assets/slides/slide-1.svg' ),
+			'ru'  => $defaults[1],
+			'en'  => $defaults[1],
+		);
+	}
+
 	return $slides;
 }
 
@@ -51,26 +84,6 @@ function milkbros_default_overlay_texts() {
 		4 => "MILK BROS · NIGHT BLUE STOUT\nСОСТАВ: вода, ячменный и овсяный солод, хмель, дрожжи.\nАЛК. 5,8% об. · ЭКСТРАКТ 15%",
 		5 => "MILK BROS · VIOLET HAZE\nСОСТАВ: вода, пшеничный солод, ячменный солод, хмель, дрожжи.\nАЛК. 4,7% об. · ЭКСТРАКТ 12%\nНефильтрованное.",
 	);
-}
-
-/**
- * Тексты пяти составов в двух языках: русский — из кастомайзера или по умолчанию,
- * английский — из кастомайзера, а пока не заполнен — тот же русский текст.
- */
-function milkbros_get_overlay_texts() {
-	$defaults = milkbros_default_overlay_texts();
-	$texts    = array();
-	for ( $i = 1; $i <= MILKBROS_SLIDE_COUNT; $i++ ) {
-		$ru = get_theme_mod( "milkbros_overlay_text_{$i}", '' );
-		$ru = ( '' !== $ru ) ? $ru : $defaults[ $i ];
-		$en = get_theme_mod( "milkbros_overlay_text_en_{$i}", '' );
-
-		$texts[] = array(
-			'ru' => $ru,
-			'en' => ( '' !== $en ) ? $en : $ru,
-		);
-	}
-	return $texts;
 }
 
 /**
@@ -104,10 +117,15 @@ function milkbros_get_feedback_email() {
 }
 
 add_action( 'customize_register', function ( $wp_customize ) {
-	$wp_customize->add_section( 'milkbros', array(
-		'title'       => 'MILK BROS: галерея и контакты',
+	$wp_customize->add_panel( 'milkbros', array(
+		'title'    => 'MILK BROS: сорта и контакты',
+		'priority' => 10,
+	) );
+
+	$wp_customize->add_section( 'milkbros_general', array(
+		'panel'       => 'milkbros',
+		'title'       => 'Общие настройки',
 		'description' => 'В текстах составов работают переносы строк и разметка: [b]жирный[/b], [i]курсив[/i].',
-		'priority'    => 10,
 	) );
 
 	$wp_customize->add_setting( 'milkbros_default_lang', array(
@@ -119,46 +137,13 @@ add_action( 'customize_register', function ( $wp_customize ) {
 	$wp_customize->add_control( 'milkbros_default_lang', array(
 		'label'       => 'Язык по умолчанию',
 		'description' => 'Что видит посетитель при первом заходе. Его собственный выбор кнопкой RU/EN важнее этой настройки.',
-		'section'     => 'milkbros',
+		'section'     => 'milkbros_general',
 		'type'        => 'radio',
 		'choices'     => array(
 			'ru' => 'Русский',
 			'en' => 'English',
 		),
 	) );
-
-	$overlay_defaults = milkbros_default_overlay_texts();
-	for ( $i = 1; $i <= MILKBROS_SLIDE_COUNT; $i++ ) {
-		$wp_customize->add_setting( "milkbros_slide_{$i}", array(
-			'default'           => '',
-			'sanitize_callback' => 'esc_url_raw',
-		) );
-		$wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, "milkbros_slide_{$i}", array(
-			'label'   => "Этикетка {$i}",
-			'section' => 'milkbros',
-		) ) );
-
-		$wp_customize->add_setting( "milkbros_overlay_text_{$i}", array(
-			'default'           => $overlay_defaults[ $i ],
-			'sanitize_callback' => 'sanitize_textarea_field',
-		) );
-		$wp_customize->add_control( "milkbros_overlay_text_{$i}", array(
-			'label'   => "Состав — слайд {$i}",
-			'section' => 'milkbros',
-			'type'    => 'textarea',
-		) );
-
-		$wp_customize->add_setting( "milkbros_overlay_text_en_{$i}", array(
-			'default'           => '',
-			'sanitize_callback' => 'sanitize_textarea_field',
-		) );
-		$wp_customize->add_control( "milkbros_overlay_text_en_{$i}", array(
-			'label'       => "Состав (EN) — слайд {$i}",
-			'description' => 'Если пусто — в английской версии показывается русский текст.',
-			'section'     => 'milkbros',
-			'type'        => 'textarea',
-		) );
-	}
 
 	$wp_customize->add_setting( 'milkbros_feedback_email', array(
 		'default'           => '',
@@ -167,9 +152,60 @@ add_action( 'customize_register', function ( $wp_customize ) {
 	$wp_customize->add_control( 'milkbros_feedback_email', array(
 		'label'       => 'Email для обратной связи',
 		'description' => 'Куда приходят письма из формы. Если пусто — на email администратора сайта.',
-		'section'     => 'milkbros',
+		'section'     => 'milkbros_general',
 		'type'        => 'email',
 	) );
+
+	$overlay_defaults = milkbros_default_overlay_texts();
+
+	for ( $i = 1; $i <= MILKBROS_MAX_SLIDES; $i++ ) {
+		$wp_customize->add_section( "milkbros_slide_sec_{$i}", array(
+			'panel' => 'milkbros',
+			'title' => "Сорт {$i}",
+		) );
+
+		$wp_customize->add_setting( "milkbros_slide_on_{$i}", array(
+			'default'           => $i <= 5,
+			'sanitize_callback' => function ( $value ) {
+				return (bool) $value;
+			},
+		) );
+		$wp_customize->add_control( "milkbros_slide_on_{$i}", array(
+			'label'   => 'Показывать этот сорт',
+			'section' => "milkbros_slide_sec_{$i}",
+			'type'    => 'checkbox',
+		) );
+
+		$wp_customize->add_setting( "milkbros_slide_{$i}", array(
+			'default'           => '',
+			'sanitize_callback' => 'esc_url_raw',
+		) );
+		$wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, "milkbros_slide_{$i}", array(
+			'label'   => 'Этикетка',
+			'section' => "milkbros_slide_sec_{$i}",
+		) ) );
+
+		$wp_customize->add_setting( "milkbros_overlay_text_{$i}", array(
+			'default'           => isset( $overlay_defaults[ $i ] ) ? $overlay_defaults[ $i ] : '',
+			'sanitize_callback' => 'sanitize_textarea_field',
+		) );
+		$wp_customize->add_control( "milkbros_overlay_text_{$i}", array(
+			'label'   => 'Состав (RU)',
+			'section' => "milkbros_slide_sec_{$i}",
+			'type'    => 'textarea',
+		) );
+
+		$wp_customize->add_setting( "milkbros_overlay_text_en_{$i}", array(
+			'default'           => '',
+			'sanitize_callback' => 'sanitize_textarea_field',
+		) );
+		$wp_customize->add_control( "milkbros_overlay_text_en_{$i}", array(
+			'label'       => 'Состав (EN)',
+			'description' => 'Если пусто — в английской версии показывается русский текст.',
+			'section'     => "milkbros_slide_sec_{$i}",
+			'type'        => 'textarea',
+		) );
+	}
 } );
 
 add_action( 'wp_ajax_milkbros_feedback', 'milkbros_handle_feedback' );
